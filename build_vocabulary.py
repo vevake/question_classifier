@@ -75,10 +75,10 @@ for f in files :
     vocab = json.loads(open(f).read())
     if 'TREC' in f:      
         output_file = 'GoogleNews-vectors_TREC.txt'
-        file_to_write = 'data/vocab_TREC.json'
+        file_to_write = 'vocab_TREC.json'
     else :
         output_file = 'GoogleNews-vectors_MS.txt'
-        file_to_write = 'data/vocab_MS.json'
+        file_to_write = 'vocab_MS.json'
     output = codecs.open(output_file, 'w' , 'utf-8')
     found = []
     not_found =[]
