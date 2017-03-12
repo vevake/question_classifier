@@ -3,6 +3,8 @@ from collections import OrderedDict
 import re
 import pandas as pd
 import json
+import codecs
+from gensim.models import word2vec
 
 def build_dictionary(data_to_dict,file_to_write):   
         word_freqs = OrderedDict()
@@ -68,6 +70,7 @@ files = ['/tmp/vocab_train.json', '/tmp/vocab_ms.json']
 emb_file = 'GoogleNews-vectors-negative300.bin'
 vocab_test = json.loads(open('/tmp/vocab_test.json').read())
 model = word2vec.Word2Vec.load_word2vec_format(emb_file, binary=True)
+
 for f in files :
     vocab = json.loads(open(f).read())
     if 'TREC' in f:      
