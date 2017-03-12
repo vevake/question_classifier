@@ -28,8 +28,6 @@ def build_dictionary(data_to_dict,file_to_write):
         with open('%s'%file_to_write, 'wb') as f:
             json.dump(worddict, f, indent=2, ensure_ascii=False)
 
-        print 'Done'
-
 def clean_str(string):
     """
     Tokenization/string cleaning for all datasets except for SST.
@@ -63,22 +61,24 @@ build_dictionary(testData['question'], '/tmp/vocab_test.json')
 #vocab for MSMARCO data
 msData = pd.read_csv("data/MS/train.csv", header=0,names=['question', 'label'])
 msData['question'] =[clean_str(x) for x in msData['question']]
-msData = pd.concat([trainData, msData])
+#msData = pd.concat([trainData, msData])
 build_dictionary(msData['question'], '/tmp/vocab_ms.json')
 
-files = ['/tmp/vocab_train.json', '/tmp/vocab_ms.json'] 
+#files = ['/tmp/vocab_train.json', '/tmp/vocab_ms.json'] 
 emb_file = 'GoogleNews-vectors-negative300.bin'
-vocab_test = json.loads(open('/tmp/vocab_test.json').read())
+vocab_2 = json.loads(open('/tmp/vocab_test.json').read())
 model = word2vec.Word2Vec.load_word2vec_format(emb_file, binary=True)
 
+files = ['/tmp/vocab_train.json', 'vocab_TREC.json'] 
 for f in files :
     vocab = json.loads(open(f).read())
-    if 'TREC' in f:      
+    if 'train' in f:      
         output_file = 'GoogleNews-vectors_TREC.txt'
         file_to_write = 'vocab_TREC.json'
     else :
         output_file = 'GoogleNews-vectors_MS.txt'
         file_to_write = 'vocab_MS.json'
+	vocab_2 = json.loads(open('/tmp/vocab_ms.json').read())
     output = codecs.open(output_file, 'w' , 'utf-8')
     found = []
     not_found =[]
@@ -98,7 +98,7 @@ for f in files :
     output = codecs.open(output_file, 'a' , 'utf-8')
     found = []
     not_found =[]
-    for i,mid in enumerate(vocab_test):
+    for i,mid in enumerate(vocab_2):
         vector = list()
         try:
             for dimension in model[mid]:
@@ -123,5 +123,3 @@ for f in files :
         json.dump(worddict, f, indent=2, ensure_ascii=False)
 
 print 'Embedding extraction completed.'
-
-

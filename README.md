@@ -1,7 +1,14 @@
 # Overview
-This code implements a question classifier in singletask learning and multitask learning approach. The primary task dataset is the 'TREC' dataset and the secondary task dataset is 'MSMARCO' dataset.
+This code implements a question classifier in singletask learning and multitask learning approach. The primary task dataset is the ['TREC'](http://cogcomp.cs.illinois.edu/Data/QA/QC/) dataset and the secondary task dataset is ['MSMARCO'](http://www.msmarco.org/) dataset.
 
 #Requirements
+- numpy
+- pandas
+- [tensorflow](https://www.tensorflow.org/)
+- [keras](https://keras.io/)
+- [gensim](https://radimrehurek.com/gensim/)
+
+The above package if not installed, can be installed using pip command for python : `pip install <package-name>`
 
 #Embedding
 The pre-trained word embeddings published by Google was used in this work. The complete word embedding published by Google can be officially downloaded from [here](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit?usp=sharing)
