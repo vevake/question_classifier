@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 import sys
 
 import numpy as np
@@ -7,7 +8,6 @@ import pandas as pd
 
 import utils
 
-np.random.seed(123)
 
 def main():
     if len(sys.argv) > 2:
@@ -17,43 +17,42 @@ def main():
     else:
         print "model name should be passed.. either logistic or MLP."
         sys.exit(1)
+    np.random.seed(123)
     x_train, y_train, x_val, y_val, x_test,y_test =  utils.load_data(dataset)
     embedding_weights = utils.create_embedding(dataset)
 
-    vocab_dim = len(embedding_weights.shape[0]) + 1
+    vocab_dim = embedding_weights.shape[1]
 
-    train = np.zeros((len(x_train),vocab_dim))
+    train = np.zeros((len(x_train), vocab_dim))
     for i,x in enumerate(x_train):
         a = np.zeros((len(x),vocab_dim))
         for j,word in enumerate(x):
-            a[j,:] = embedding_weights[word]        
+            a[j,:] = embedding_weights[word]
         train[i] = a.mean(axis=0)
 
     val = np.zeros((len(x_val),vocab_dim))
     for i,x in enumerate(x_val):
         a = np.zeros((len(x),vocab_dim))
         for j,word in enumerate(x):
-            a[j,:] = embedding_weights[word]        
+            a[j,:] = embedding_weights[word]
         val[i] = a.mean(axis=0)
 
     test = np.zeros((len(x_test),vocab_dim))
     for i,x in enumerate(x_test):
         a = np.zeros((len(x),vocab_dim))
         for j,word in enumerate(x):
-            a[j,:] = embedding_weights[word]        
+            a[j,:] = embedding_weights[word]
         test[i] = a.mean(axis=0)
     
-    folder_to_save_files = model_name
-
-    v_a = 0
-    t_a = 0
+    folder_to_save_files = dataset + '/' + model_name
+    if not os.path.exists(folder_to_save_files):
+        os.makedirs(folder_to_save_files)
 
     from keras.utils import np_utils
     y_train = np_utils.to_categorical(y_train, nb_classes=6)
     y_val = np_utils.to_categorical(y_val, nb_classes=6)
     y_test = np_utils.to_categorical(y_test, nb_classes=6)
-
-    import numpy as np
+    
     np.random.seed(123)
     from keras.callbacks import Callback
     from keras.models import Sequential
@@ -71,7 +70,7 @@ def main():
             self.val_acc = 0
 
         def on_epoch_end(self, epoch, logs={}):
-            if self.val_acc < logs.get('val_acc') :
+            if self.val_acc < logs.get('val_acc'):
                 self.val_acc = logs.get('val_acc')
                 x, y = self.test_data
                 loss, acc = self.model.evaluate(x, y, verbose=0)
@@ -90,14 +89,14 @@ def main():
     if model_name == 'logistic' :
     # Logistic layer
         model=Sequential()
-        model.add(Dense(6, input_dim=300, activation='sigmoid'))
+        model.add(Dense(6, input_dim=vocab_dim, activation='sigmoid'))
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         model.summary()
 
     elif model_name == 'MLP' :
         #Multi layer perceptron
         model = Sequential()
-        model.add(Dense(128, input_dim=300, activation='relu'))
+        model.add(Dense(128, input_dim=vocab_dim, activation='relu'))
         model.add(Dropout(0.5))
         model.add(Dense(200, activation='relu'))
         model.add(Dropout(0.5))
@@ -110,10 +109,12 @@ def main():
         sys.exit(1)
         
     open(folder_to_save_files + '/model.json', 'w').write(model.to_json())
+    np.save(folder_to_save_files + '/embedding.npy', embedding_weights)    
 
-    model.fit(train,y_train,validation_data=[val,y_val], nb_epoch=1000, batch_size=100,callbacks=callbacks_list,verbose=1)
+    model.fit(train,y_train,validation_data=[val, y_val], nb_epoch=1000, batch_size=100,callbacks=callbacks_list,verbose=1)
     print 'Validation_Acc = ', v_a
     print 'Test_Acc = ', t_a
 
 if __name__ == '__main__':
+    np.random.seed(123)
     main()

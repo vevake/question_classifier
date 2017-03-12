@@ -15,9 +15,6 @@ def main():
         sys.exit(1)
     dataset = 'TREC'
     x_train, y_train, x_val, y_val, x_test, y_test = utils.load_data(dataset, 'MT')
-    embedding_weights = utils.create_embedding(dataset, 'MT')
-
-    vocab_dim = len(embedding_weights.shape[0]) + 1
 
     if model_name in ['CNN', 'LSTM', 'GRU']:
         #use padding to input to neural net
@@ -34,6 +31,9 @@ def main():
         y_test = np_utils.to_categorical(y_test, nb_classes=6)
 
     elif model_name in ['logistic', 'MLP']:
+        embedding_weights = np.load('MS/' + model_name + '/embedding.npy')
+        vocab_dim = embedding_weights.shape[1]
+
         train = np.zeros((len(x_train), vocab_dim))
         for i, x in enumerate(x_train):
             a = np.zeros((len(x), vocab_dim))
@@ -57,7 +57,12 @@ def main():
                 a[j, :] = embedding_weights[word]
             test[i] = a.mean(axis=0)
         x_test = test
-    
+
+        from keras.utils import np_utils
+        y_train = np_utils.to_categorical(y_train, nb_classes=6)
+        y_val = np_utils.to_categorical(y_val, nb_classes=6)
+        y_test = np_utils.to_categorical(y_test, nb_classes=6)
+
     else:
         print "enter valid model name."
         sys.exit(1)
@@ -67,9 +72,6 @@ def main():
         os.makedirs(folder_to_save_files)
 
     model_to_load = 'MS/' + model_name + '/model.hdf5'
-
-    v_a = 0
-    t_a = 0
 
     np.random.seed(123)
     from keras.callbacks import Callback, ModelCheckpoint

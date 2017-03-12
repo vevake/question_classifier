@@ -1,5 +1,4 @@
 import numpy as np
-np.random.seed(123)
 import csv
 import pandas as pd
 import json
@@ -26,32 +25,31 @@ def clean_str(string):
 def load_data(dataset,task = 'ST'):
     if dataset == 'TREC':
         trainData = pd.read_csv("data/TREC/train.csv", header=0, delimiter="\t", quoting=3)
-        testData = pd.read_csv("data/TERC/test.csv", header=0, delimiter="\t", quoting=3)
-        np.random.seed(123)
+        testData = pd.read_csv("data/TREC/test.csv", header=0, delimiter="\t", quoting=3)
+
         trainData = trainData.iloc[np.random.permutation(len(trainData))]
         val_len = int(round(len(trainData)*0.15))
         train = trainData.head(len(trainData)-val_len)
         val = trainData.tail(val_len)
-        if task == 'ST' :
+        if task == 'ST':
             vocab = json.loads(open('vocab_TREC.json').read())
         elif task == 'MT':
             vocab = json.loads(open('vocab_MS.json').read())
-
+        class_ = {'ABBR': 0, 'DESC': 1, 'ENTY': 2, 'HUM': 3, 'LOC' : 4, 'NUM': 5 }
     elif dataset == 'MS':
         train = pd.read_csv('data/MS/train.csv',header=0,names=['question', 'label'])
         val = pd.read_csv('data/MS/dev.csv',header=0,names=['question', 'label'])
         testData = pd.read_csv('data/MS/test.csv',header=0,names=['question', 'label'])
         vocab = json.loads(open('vocab_MS.json').read())
-
-    else :
+        class_ = {'description': 1, 'entity': 2, 'person': 3, 'location' : 4, 'numeric': 5 }
+    else:
         print "wrong dataset"
         sys.exit(1)
-    
+
     train['question'] = [clean_str(x) for x in train['question']]
     val['question'] = [clean_str(x) for x in val['question']]
     testData['question'] = [clean_str(x) for x in testData['question']]
 
-    class_ = {'ABBR': 0, 'DESC': 1, 'ENTY': 2, 'HUM': 3, 'LOC' : 4, 'NUM': 5 }
     x_train = []
     for ques in train['question']:
         s = ques.strip().split()
@@ -87,7 +85,7 @@ def create_embedding(dataset,task='ST'):
         word_vec = 'GoogleNews-vectors_MS.txt'
         vocab = json.loads(open('vocab_MS.json').read())
     else:
-        print 'error leading the embedding.'
+        print 'error loading the embedding.'
         sys.exit(1)
 
     f = open(word_vec)

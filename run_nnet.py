@@ -22,7 +22,7 @@ def main():
         print "wrong dataset name provided. either TREC or MS"
         sys.exit(1)
 
-    vocab_len = len(embedding_weights.shape[0])
+    vocab_len = embedding_weights.shape[0]
 
     #use padding to input to neural net
     max_len = 25
