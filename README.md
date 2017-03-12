@@ -1,5 +1,5 @@
 # Overview
-This code implements a question classifier in singletask learning and multitask learning approach. The primary task dataset is the ['TREC'](http://cogcomp.cs.illinois.edu/Data/QA/QC/) dataset and the secondary task dataset is ['MSMARCO'](http://www.msmarco.org/) dataset.
+This code implements a question classifier in singletask learning and multitask learning approach. The primary task dataset is the ['TREC'](http://cogcomp.cs.illinois.edu/Data/QA/QC/) dataset and the secondary task dataset is ['MSMARCO'](http://www.msmarco.org/) dataset. 5 learning algorithms are implemented namely, logistic regression, multilayer perceptron, convolutional neural network, long short term memory network and gated recurrent unit networks.  
 
 #Build dataset
 The dataset is already parsed and saved in the directory named 'data' .But it can also be downloaded from the official sites of ['TREC'](http://cogcomp.cs.illinois.edu/Data/QA/QC/) and ['MSMARCO'](http://www.msmarco.org/)
@@ -32,15 +32,15 @@ For logisitc and multilayer perceptron algorithms
 ```sh
 python perceptron.py <dataset> <model> 
 ```
-dataset - 'TREC' or 'MS'
-model - 'logistic' or 'MLP'
+dataset - 'TREC' or 'MS'  
+model - 'logistic' or 'MLP'  
 
 For CNN or LSTM or GRU networks
 ```sh
 python run_nnet.py <dataset> <model> 
 ```
-dataset - 'TREC' or 'MS'
-model - 'CNN' or 'LSTM' or 'GRU'
+dataset - 'TREC' or 'MS'  
+model - 'CNN' or 'LSTM' or 'GRU'  
 
 The trained models are saved in the folder named '<dataset>/<model>' with the embedding file as well. 
 
