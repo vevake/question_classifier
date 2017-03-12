@@ -1,10 +1,14 @@
-import numpy as np
-np.random.seed(123)
 import csv
-import pandas as pd
 import json
+import os
 import sys
+
+import numpy as np
+import pandas as pd
+
 import utils
+
+np.random.seed(123)
 
 def main() :
     if len(sys.argv) > 2 :
@@ -30,8 +34,8 @@ def main() :
     x_train = sequence.pad_sequences(x_train, maxlen=max_len)
     y_train = np_utils.to_categorical(y_train, nb_classes=6)
 
-    x_dev = sequence.pad_sequences(x_val, maxlen=max_len)
-    y_dev = np_utils.to_categorical(y_val, nb_classes=6)
+    x_val = sequence.pad_sequences(x_val, maxlen=max_len)
+    y_val = np_utils.to_categorical(y_val, nb_classes=6)
 
     x_test = sequence.pad_sequences(x_test, maxlen=max_len)
     y_test = np_utils.to_categorical(y_test, nb_classes=6)
@@ -42,7 +46,7 @@ def main() :
         
     v_a = 0
     t_a = 0
-    if dataset == 'TREC' : 
+    if dataset == 'TREC': 
         batch_size = 100
         epoch = 1000
     else : 
@@ -100,15 +104,15 @@ def main() :
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
         model.summary()
     else :
-        print "Wrong mode name..it should be either CNN, LSTM or GRU"
+        print "Wrong model name..it should be either CNN, LSTM or GRU"
             
     #checkpoint
-    filepath = folder_to_save_files + "model.hdf5"
+    filepath = folder_to_save_files + "/model.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
     callbacks_list = [checkpoint,TestCallback((x_test,y_test))]
 
-    open(folder_to_save_files + 'model.json', 'w').write(model.to_json())
-    np.save( folder_to_save_files + 'embedding.npy', embedding_weights)
+    open(folder_to_save_files + '/model.json', 'w').write(model.to_json())
+    np.save( folder_to_save_files + '/embedding.npy', embedding_weights)
 
     model.fit(x_train, y_train, validation_data=(x_val,y_val), nb_epoch=epoch, batch_size=batch_size,callbacks=callbacks_list,verbose=1)
 

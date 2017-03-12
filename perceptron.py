@@ -1,10 +1,13 @@
-import numpy as np
-np.random.seed(123)
 import csv
-import pandas as pd
 import json
 import sys
+
+import numpy as np
+import pandas as pd
+
 import utils
+
+np.random.seed(123)
 
 def main():
     if len(sys.argv) > 2:
@@ -79,7 +82,7 @@ def main():
                 print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
     
     #checkpoint
-    filepath = folder_to_save_files + "model.hdf5"
+    filepath = folder_to_save_files + "/model.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
     callbacks_list = [checkpoint,TestCallback((test,y_test))]
 
@@ -106,7 +109,7 @@ def main():
         print "wrong model name provided"
         sys.exit(1)
         
-    open(folder_to_save_files + 'model.json', 'w').write(model.to_json())
+    open(folder_to_save_files + '/model.json', 'w').write(model.to_json())
 
     model.fit(train,y_train,validation_data=[val,y_val], nb_epoch=1000, batch_size=100,callbacks=callbacks_list,verbose=1)
     print 'Validation_Acc = ', v_a

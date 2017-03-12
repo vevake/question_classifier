@@ -23,7 +23,7 @@ def clean_str(string):
     string = re.sub(r"\s{2,}", " ", string)
     return string.strip()
 
-def load_data(dataset):
+def load_data(dataset,task = 'ST'):
     if dataset == 'TREC':
         trainData = pd.read_csv("data/TREC/train.csv", header=0, delimiter="\t", quoting=3)
         testData = pd.read_csv("data/TERC/test.csv", header=0, delimiter="\t", quoting=3)
@@ -32,7 +32,10 @@ def load_data(dataset):
         val_len = int(round(len(trainData)*0.15))
         train = trainData.head(len(trainData)-val_len)
         val = trainData.tail(val_len)
-        vocab = json.loads(open('vocab_TREC.json').read())
+        if task == 'ST' :
+            vocab = json.loads(open('vocab_TREC.json').read())
+        elif task == 'MT':
+            vocab = json.loads(open('vocab_MS.json').read())
 
     elif dataset == 'MS':
         train = pd.read_csv('data/MS/train.csv',header=0,names=['question', 'label'])
@@ -75,14 +78,17 @@ def load_data(dataset):
 
     return x_train, y_train, x_val, y_val, x_test, y_test
 
-def creat_embedding(dataset):
+def create_embedding(dataset,task='ST'):
     embeddings_index = {}
-    if dataset == 'TREC' :
+    if dataset == 'TREC' and task == 'ST':
         word_vec = 'GoogleNews-vectors_TREC.txt'
         vocab = json.loads(open('vocab_TREC.json').read())
-    elif dataset == 'MS' :
+    elif dataset == 'MS' or task == 'MT':
         word_vec = 'GoogleNews-vectors_MS.txt'
         vocab = json.loads(open('vocab_MS.json').read())
+    else:
+        print 'error leading the embedding.'
+        sys.exit(1)
 
     f = open(word_vec)
     for emb in f:
